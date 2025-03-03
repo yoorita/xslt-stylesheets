@@ -37,6 +37,4 @@ jobs:
           cd dita-ot-repo
           git add .
           git commit -m "Sync changes from source repository"
-          git push https://github.com/yoorita/dita-ot-repo.git HEAD:main
-        env:
-          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+          git push https://yoorita:${{ secrets.REPO_TOKEN }}@github.com/yoorita/dita-ot-repo.git HEAD:main
