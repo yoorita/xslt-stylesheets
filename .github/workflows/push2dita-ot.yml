@@ -1,0 +1,39 @@
+name: Push plugins changes to DITA-OT repo
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  push_changes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the source repository
+        uses: actions/checkout@v2
+        with:
+          ref: main
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+      - name: Clone the target repository
+        run: |
+          git clone https://github.com/username/target-repo.git
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Copy files to the target repository
+        run: |
+          cp -r * target-repo/
+
+      - name: Commit and push changes to the target repository
+        run: |
+          cd target-repo
+          git add .
+          git commit -m "Sync changes from source repository"
+          git push https://github.com/username/target-repo.git HEAD:main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
