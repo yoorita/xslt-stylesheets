@@ -34,7 +34,7 @@ jobs:
 
       - name: Commit and push changes to the target repository
         run: |
-          cd dita-ot-repo
+          cd dita-ot-repo/plugins/
           git add .
           git commit -m "Sync changes from source repository"
           git push https://yoorita:${{ secrets.REPO_TOKEN }}@github.com/yoorita/dita-ot-repo.git HEAD:main
