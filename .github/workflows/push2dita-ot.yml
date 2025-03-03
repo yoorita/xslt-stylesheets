@@ -30,11 +30,11 @@ jobs:
 
       - name: Sync files with rsync
         run: |
-          rsync -av --exclude .git/ plugins/ dita-ot-repo/plugins/
+          rsync -av --exclude .git/ plugins/ dita-ot-repo/oxygen-publishing-engine-27/plugins/
 
       - name: Commit and push changes to the target repository
         run: |
-          cd dita-ot-repo/plugins/
+          cd dita-ot-repo/
           git add .
           git commit -m "Sync changes from source repository"
           git push https://yoorita:${{ secrets.REPO_TOKEN }}@github.com/yoorita/dita-ot-repo.git HEAD:main
