@@ -1,0 +1,41 @@
+name: Push plugins changes to DITA-OT repo
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'plugins/**'
+
+jobs:
+  push_changes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the source repository
+        uses: actions/checkout@v2
+        with:
+          ref: main
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "${{ secrets.USER_NAME }}"
+          git config --global user.email "${{ secrets.USER_EMAIL }}"
+
+      - name: Clone the target repository
+        run: |
+          git clone https://github.com/yoorita/dita-ot-repo.git dita-ot-repo
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+
+      - name: Sync files with rsync
+        run: |
+          rsync -av --exclude .git/ plugins/ dita-ot-repo/plugins/
+
+      - name: Commit and push changes to the target repository
+        run: |
+          cd dita-ot-repo
+          git add .
+          git commit -m "Sync changes from source repository"
+          git push https://github.com/yoorita/dita-ot-repo.git HEAD:main
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
