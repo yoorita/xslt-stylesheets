@@ -17,7 +17,6 @@ jobs:
           ref: main
 
       - name: Set up environmental variables from properties file
-        id: SetEnvVars
         run: |
           while IFS='=' read -r key value
             do
@@ -25,12 +24,6 @@ jobs:
           done < "action.properties"
           CURR_REPO=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
           echo "CURR_REPO=$CURR_REPO" >> "$GITHUB_ENV"
-
-      - name: Set up Git
-        run: |
-          echo git --version
-          git config --global user.name ${{ secrets.USER_NAME }}
-          git config --global user.email ${{ secrets.USER_EMAIL }}
 
       - name: Clone the target repository and checkout the branch
         run: |
