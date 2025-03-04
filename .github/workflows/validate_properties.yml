@@ -57,7 +57,7 @@ jobs:
 
       - name: Upload artifact to workflow
         uses: actions/upload-artifact@v3
-        if: ${{ fileExists('errors.txt') }}
+        if: ${{ hashFiles('errors.txt') != '' }}
         with:
           name: example-artifact
           path: example-artifact.txt
