@@ -27,3 +27,4 @@ jobs:
         run: |
           git ls-remote https://x-access-token:${{ secrets.REPO_TOKEN }}@github.com/$REPO_NAME.git > /dev/null 2>&1
           EXIT_CODE=$?
+          echo "Access to git repo code: $EXIT_CODE"
