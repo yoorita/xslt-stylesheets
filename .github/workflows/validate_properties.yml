@@ -47,24 +47,20 @@ jobs:
           steps.access-to-dita-repo.outcome == 'failure' ||
           steps.check-branch.outcome == 'failure'
         run: |
+          
+          echo "⚠️Found problems:" >> errors.md
+          
           if [ "${{ steps.access-to-dita-repo.outcome }}" == "failure" ]; then
-            echo "- Git repo '$REPO_NAME.git' cannot be accessed" >> errors.txt
+            echo "- Git repo '$REPO_NAME.git' cannot be accessed" >> errors.md
           fi
           
           if [ "${{ steps.check-branch.outcome }}" == "failure" ]; then
-            echo "- Git branch '$BRANCH' does not exist" >> errors.txt
+            echo "- Git branch '$BRANCH' does not exist" >> errors.md
           fi
-
-      - name: Retrieve body text from file
-        id: read_file
-        if: ${{ hashFiles('errors.txt') != '' }}
-        run: |
-          echo "::set-output name=body::$(cat errors.txt)"
 
       - name: Create commit comment
         uses: peter-evans/commit-comment@v3
-        if: ${{ steps.read_file.outputs.body != '' }}
+        if: ${{ hashFiles('errors.md') != '' }}
         with:
-          body: |
-            ⚠️Found problems:
-            ${{ steps.read_file.outputs.body }}
+          body-path: 'errors.md'
+          token: ${{ secrets.REPO_TOKEN }}
