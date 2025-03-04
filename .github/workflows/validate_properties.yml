@@ -48,16 +48,23 @@ jobs:
           steps.check-branch.outcome == 'failure'
         run: |
           if [ "${{ steps.access-to-dita-repo.outcome }}" == "failure" ]; then
-            echo "Git repo '$REPO_NAME.git' cannot be accessed" >> errors.txt
+            echo "- Git repo '$REPO_NAME.git' cannot be accessed" >> errors.txt
           fi
           
           if [ "${{ steps.check-branch.outcome }}" == "failure" ]; then
-            echo "Git branch '$BRANCH' does not exist" >> errors.txt
+            echo "- Git branch '$BRANCH' does not exist" >> errors.txt
           fi
 
-      - name: Upload artifact to workflow
-        uses: actions/upload-artifact@v4
+      - name: Retrieve body text from file
+        id: read_file
         if: ${{ hashFiles('errors.txt') != '' }}
+        run: |
+          echo "::set-output name=body::$(cat errors.txt)"
+
+      - name: Create commit comment
+        uses: peter-evans/commit-comment@v3
+        if: ${{ steps.read_file.outputs.body != '' }}
         with:
-          name: errors-artifact
-          path: errors.txt
+          body: |
+            ⚠️Found problems:
+            ${{ steps.read_file.outputs.body }}
