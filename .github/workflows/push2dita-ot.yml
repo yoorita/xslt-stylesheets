@@ -25,9 +25,14 @@ jobs:
           CURR_REPO=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
           echo "CURR_REPO=$CURR_REPO" >> "$GITHUB_ENV"
 
+      - name: Set up Git
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
       - name: Clone the target repository and checkout the branch
         run: |
-          git clone https://x-access-token:${{ secrets.REPO_TOKEN }}@github.com/${{ secrets.USER_NAME }}/$REPO_NAME.git $REPO_NAME
+          git clone https://x-access-token:${{ secrets.REPO_TOKEN }}@github.com/${{ github.actor }}/$REPO_NAME.git $REPO_NAME
           cd $REPO_NAME
           git checkout $BRANCH
 
@@ -40,4 +45,4 @@ jobs:
           cd $REPO_NAME/
           git add .
           git commit -m "Sync changes from $CURR_REPO repository"
-          git push https://${{ secrets.USER_NAME }}:${{ secrets.REPO_TOKEN }}@github.com/${{ secrets.USER_NAME }}/$REPO_NAME.git HEAD:$BRANCH
+          git push https://${{ github.actor }}:${{ secrets.REPO_TOKEN }}@github.com/${{ github.actor }}/$REPO_NAME.git HEAD:$BRANCH
