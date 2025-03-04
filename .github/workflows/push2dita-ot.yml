@@ -22,7 +22,7 @@ jobs:
           while IFS='=' read -r key value
             do
               echo "${key}=${value}" >> "$GITHUB_ENV"
-          done < "action.propreties"
+          done < "action.properties"
           CURR_REPO=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
           echo "CURR_REPO=$CURR_REPO" >> "$GITHUB_ENV"
           echo "Publishing to the repo '$REPO_NAME' to '$BRANCH' branch with engine '$PUBLISHING_ENGINE'"
