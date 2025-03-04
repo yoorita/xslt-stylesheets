@@ -20,8 +20,8 @@ jobs:
         id: SetEnvVars
         run: |
           export $(grep -v '^#' action.properties | xargs)
-          echo "BRANCH=$BRANCH" >> $$GITHUB_OUTPUT
-          echo "PUBLISHING_ENGINE=$PUBLISHING_ENGINE" >> $$GITHUB_OUTPUT
+          echo "BRANCH=$BRANCH" >> "$GITHUB_OUTPUT"
+          echo "PUBLISHING_ENGINE=$PUBLISHING_ENGINE" >> "$GITHUB_OUTPUT"
           echo "Publishing to \"$BRANCH\" branch with engine $PUBLISHING_ENGINE"
 
       - name: Set up Git
