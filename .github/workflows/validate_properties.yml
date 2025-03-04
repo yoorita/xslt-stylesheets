@@ -60,6 +60,7 @@ jobs:
         if: ${{ hashFiles('errors.md') != '' }}
         with:
           message-path: 'errors.md'
+          repo-token: ${{ secrets.REPO_TOKEN }}
 
       - name: Forcefully fail
         if: ${{ hashFiles('errors.md') != '' }}
