@@ -20,7 +20,7 @@ jobs:
         run: |
           BRANCH=$(grep -oP '^BRANCH=\K.*' action.properties)
           PUBLISHING_ENGINE=$(grep -oP '^PUBLISHING_ENGINE=\K.*' action.properties)
-          echo "Piblishing to \"$BRANCH\" branch with engine $PUBLISHING_ENGINE"
+          echo "Publishing to \"$BRANCH\" branch with engine $PUBLISHING_ENGINE"
 
       - name: Set up Git
         run: |
