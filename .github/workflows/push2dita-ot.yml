@@ -38,10 +38,11 @@ jobs:
 
       - name: Sync files with rsync
         run: |
-          rsync -av --exclude .git/ plugins/ $PUBLISHING_ENGINE/plugins/
+          rsync -av --exclude .git/ plugins/ dita-ot-repo/$PUBLISHING_ENGINE/plugins/
 
       - name: Commit and push changes to the target repository
         run: |
+          cd dita-ot-repo/
           git add .
           git commit -m "Sync changes from source repository"
           git push https://${{ secrets.USER_NAME }}:${{ secrets.REPO_TOKEN }}@github.com/${{ secrets.USER_NAME }}/dita-ot-repo.git HEAD:$BRANCH
