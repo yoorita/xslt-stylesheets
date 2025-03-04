@@ -16,13 +16,13 @@ jobs:
         with:
           ref: main
 
-      - name: Set up bash script to read from properties file
+      - name: Set up environmental variables from properties file
         id: SetEnvVars
         run: |
           export $(grep -v '^#' action.properties | xargs)
           echo "BRANCH=$BRANCH" >> "$GITHUB_ENV"
           echo "PUBLISHING_ENGINE=$PUBLISHING_ENGINE" >> "$GITHUB_ENV"
-          echo "Publishing to \"$BRANCH\" branch with engine $PUBLISHING_ENGINE"
+          echo "Publishing to '$BRANCH' branch with engine '$PUBLISHING_ENGINE'"
 
       - name: Set up Git
         run: |
@@ -30,10 +30,20 @@ jobs:
           git config --global user.name ${{ secrets.USER_NAME }}
           git config --global user.email ${{ secrets.USER_EMAIL }}
 
-      - name: Clone the target repository
+      - name: Clone the target repository and checkout the branch
         run: |
           git clone https://github.com/${{ secrets.USER_NAME }}/dita-ot-repo.git dita-ot-repo
           cd dita-ot-repo
+          
+          # Check if the branch really exists on the origin/remote
+          git ls-remote --exit-code --heads origin $BRANCH >/dev/null 2>&1
+          EXIT_CODE=$?
+          if [[ $EXIT_CODE == '2' ]]; then
+            echo "Git branch '$BRANCH' does not exist in the remote repository"
+            exit 1
+          fi
+
+          # Checkout branch if exists
           git checkout $BRANCH
 
       - name: Sync files with rsync
@@ -44,5 +54,5 @@ jobs:
         run: |
           cd dita-ot-repo/
           git add .
-          git commit -m "Sync changes from source repository"
+          git commit -m "Sync changes from xslt-stylesheets repository"
           git push https://${{ secrets.USER_NAME }}:${{ secrets.REPO_TOKEN }}@github.com/${{ secrets.USER_NAME }}/dita-ot-repo.git HEAD:$BRANCH
