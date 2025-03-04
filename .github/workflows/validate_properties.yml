@@ -46,21 +46,18 @@ jobs:
         if: |
           steps.access-to-dita-repo.outcome == 'failure' ||
           steps.check-branch.outcome == 'failure'
-        run: |
-          
-          echo "⚠️Found problems:" >> errors.md
-          
+        run: |          
           if [ "${{ steps.access-to-dita-repo.outcome }}" == "failure" ]; then
-            echo "- Git repo '$REPO_NAME.git' cannot be accessed" >> errors.md
+            echo "⚠️ Git repo '$REPO_NAME.git' cannot be accessed" >> errors.md
           fi
           
           if [ "${{ steps.check-branch.outcome }}" == "failure" ]; then
-            echo "- Git branch '$BRANCH' does not exist" >> errors.md
+            echo "⚠️ Git branch '$BRANCH' does not exist" >> errors.md
           fi
 
       - name: Create commit comment
-        uses: peter-evans/commit-comment@v3
+        uses: mshick/add-pr-comment@v2
         if: ${{ hashFiles('errors.md') != '' }}
         with:
-          body-path: 'errors.md'
-          token: ${{ secrets.REPO_TOKEN }}
+          message-path: 'errors.md'
+          repo-token: ${{ secrets.REPO_TOKEN }}
