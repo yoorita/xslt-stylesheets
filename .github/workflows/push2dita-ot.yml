@@ -38,7 +38,7 @@ jobs:
 
       - name: Sync files with rsync
         run: |
-          rsync -av --exclude .git/ plugins/ dita-ot-repo/$PUBLISHING_ENGINE/plugins/
+          rsync -av --delete --exclude .git/ plugins/ dita-ot-repo/$PUBLISHING_ENGINE/plugins/
 
       - name: Commit and push changes to the target repository
         run: |
