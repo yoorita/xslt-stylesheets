@@ -60,3 +60,7 @@ jobs:
         if: ${{ hashFiles('errors.md') != '' }}
         with:
           message-path: 'errors.md'
+
+      - name: Forcefully fail
+        if: ${{ hashFiles('errors.md') != '' }}
+        run: exit 1
