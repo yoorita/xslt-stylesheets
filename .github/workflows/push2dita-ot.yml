@@ -32,18 +32,8 @@ jobs:
 
       - name: Clone the target repository and checkout the branch
         run: |
-          git clone https://github.com/${{ secrets.USER_NAME }}/dita-ot-repo.git dita-ot-repo
+          git clone https://x-access-token:${{ secrets.REPO_TOKEN }}@github.com/${{ secrets.USER_NAME }}/dita-ot-repo.git dita-ot-repo
           cd dita-ot-repo
-          
-          # Check if the branch really exists on the origin/remote
-          git ls-remote --exit-code --heads origin $BRANCH > /dev/null 2>&1
-          EXIT_CODE=$?
-          if [[ $EXIT_CODE == '2' ]]; then
-            echo "Git branch '$BRANCH' does not exist in the remote repository"
-            exit 1
-          fi
-
-          # Checkout branch if exists
           git checkout $BRANCH
 
       - name: Sync files with rsync
