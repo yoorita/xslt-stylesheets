@@ -18,7 +18,9 @@ jobs:
 
       - name: Set up bash script to read from properties file
         run: |
-          export $(grep -v '^#' action.properties | xargs) >> $GITHUB_ENV
+          export $(grep -v '^#' action.properties | xargs)
+          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+          echo "PUBLISHING_ENGINE=$PUBLISHING_ENGINE" >> $GITHUB_ENV
           echo "Publishing to \"${{ env.BRANCH }}\" branch with engine ${{ env.PUBLISHING_ENGINE }}"
 
       - name: Set up Git
