@@ -30,25 +30,34 @@ jobs:
 
       - name: Check access to DITA-OT repo
         id: access-to-dita-repo
+        continue-on-error: true
         run: |
           git ls-remote https://x-access-token:${{ secrets.REPO_TOKEN }}@github.com/${{ github.actor }}/$REPO_NAME.git
 
       - name: Check Branch existence
         id: check-branch
+        continue-on-error: true
         run: |
           git clone https://x-access-token:${{ secrets.REPO_TOKEN }}@github.com/${{ github.actor }}/$REPO_NAME.git $REPO_NAME
           cd $REPO_NAME
           git ls-remote --exit-code --heads origin $BRANCH
 
-      - name: Notify on failure
+      - name: Catch up failure errors
         if: |
           steps.access-to-dita-repo.outcome == 'failure' ||
           steps.check-branch.outcome == 'failure'
         run: |
           if [ "${{ steps.access-to-dita-repo.outcome }}" == "failure" ]; then
-            echo "Git repo '$REPO_NAME.git' cannot be accessed"
+            echo "Git repo '$REPO_NAME.git' cannot be accessed" >> errors.txt
           fi
           
-          if [ "${{ steps.access-to-dita-repo.outcome }}" == "failure" ]; then
-            echo "Git branch '$BRANCH' does not exist"
+          if [ "${{ steps.check-branch.outcome }}" == "failure" ]; then
+            echo "Git branch '$BRANCH' does not exist" >> errors.txt
           fi
+
+      - name: Upload artifact to workflow
+        uses: actions/upload-artifact@v3
+        if: ${{ fileExists('errors.txt') }}
+        with:
+          name: example-artifact
+          path: example-artifact.txt
