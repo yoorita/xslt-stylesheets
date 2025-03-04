@@ -23,8 +23,31 @@ jobs:
               echo "${key}=${value}" >> "$GITHUB_ENV"
           done < "action.properties"
 
-      - name: Check access to Git
+      - name: Set up Git
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: Check access to DITA-OT repo
         run: |
           git ls-remote https://x-access-token:${{ secrets.REPO_TOKEN }}@github.com/${{ github.actor }}/$REPO_NAME.git > /dev/null 2>&1
           EXIT_CODE=$?
-          echo "Access to git repo code: $EXIT_CODE"
+          if [[ $EXIT_CODE == '0' ]]; then
+            echo "Git repo '$REPO_NAME.git' can be accessed"
+          elif [[ $EXIT_CODE == '2' ]]; then
+            echo "Git repo '$REPO_NAME.git' cannot be accessed"
+            exit 1
+          fi
+
+      - name: Check Branch existence
+        run: |
+          git clone https://x-access-token:${{ secrets.REPO_TOKEN }}@github.com/${{ github.actor }}/$REPO_NAME.git $REPO_NAME
+          cd $REPO_NAME
+          git ls-remote --exit-code --heads origin $BRANCH >/dev/null 2>&1
+          EXIT_CODE=$?
+          if [[ $EXIT_CODE == '0' ]]; then
+            echo "Git branch '$BRANCH' exists"
+          elif [[ $EXIT_CODE == '2' ]]; then
+            echo "Git branch '$BRANCH' does not exist"
+            exit 1
+          fi
